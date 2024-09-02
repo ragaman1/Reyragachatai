@@ -8,7 +8,7 @@ import {
   streamUI,
   createStreamableValue
 } from 'ai/rsc'
-import { openai } from '@ai-sdk/openai'
+import { customAIStream } from './customAIClient'
 
 import { BotCard, BotMessage, SystemMessage } from '@/components/stocks'
 
