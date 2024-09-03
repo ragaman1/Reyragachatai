@@ -8,7 +8,8 @@ import {
   streamUI,
   createStreamableValue
 } from 'ai/rsc'
-import { openai } from '@ai-sdk/openai'
+require('dotenv').config()
+import { createOpenAI } from '@ai-sdk/openai' // Import createOpenAI
 
 import { BotCard, BotMessage, SystemMessage } from '@/components/stocks'
 
@@ -17,6 +18,13 @@ import { runAsyncFnWithoutBlocking, sleep, nanoid } from '@/lib/utils'
 import { saveChat } from '@/app/actions'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
+
+// Create the OpenAI instance with your custom settings
+const openai = createOpenAI({
+  baseURL: 'https://api.cow.rip/api/v1', // Replace with your proxy URL
+  apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is set in your environment variables
+  compatibility: 'strict' // Enable strict mode if needed
+})
 
 async function submitUserMessage(content: string) {
   'use server'
@@ -39,7 +47,7 @@ async function submitUserMessage(content: string) {
   let textNode: undefined | React.ReactNode
 
   const result = await streamUI({
-    model: openai('chatgpt-4o-latest'),
+    model: openai('gpt-4-turbo'), // Use the custom OpenAI instance
     initial: <SystemMessage>Loading...</SystemMessage>,
     system: `You are a helpful AI assistant.`,
     messages: [
