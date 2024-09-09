@@ -47,7 +47,7 @@ async function submitUserMessage(content: string) {
   let textNode: undefined | React.ReactNode
 
   const result = await streamUI({
-    model: openai('gpt-4-turbo'), // Use the custom OpenAI instance
+    model: openai('llama-3.1-405b'), // Use the custom OpenAI instance
     initial: <SystemMessage>Loading...</SystemMessage>,
     system: `You are a helpful AI assistant.`,
     messages: [
