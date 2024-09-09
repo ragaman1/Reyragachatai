@@ -32,48 +32,56 @@ export function BotMessage({
   return (
     <div className={cn('group relative flex flex-col items-start', className)}>
       <div className="text-sm font-bold text-gray-500 mb-1">AI</div>
-      <div className="flex-1 space-y-1 overflow-hidden">
-        <MemoizedReactMarkdown
-          className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
-          remarkPlugins={[remarkGfm, remarkMath]}
-          components={{
-            p({ children }) {
-              return <p className="mb-1 last:mb-0">{children}</p>
-            },
-            code({ node, inline, className, children, ...props }) {
-              if (children.length) {
-                if (children[0] == '▍') {
+      <div className="flex-1 w-full overflow-hidden">
+        <div className="overflow-x-auto">
+          <MemoizedReactMarkdown
+            className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 max-w-none"
+            remarkPlugins={[remarkGfm, remarkMath]}
+            components={{
+              p({ children }) {
+                return (
+                  <p className="mb-1 last:mb-0 whitespace-normal">{children}</p>
+                )
+              },
+              code({ node, inline, className, children, ...props }) {
+                if (children.length) {
+                  if (children[0] == '▍') {
+                    return (
+                      <span className="mt-1 animate-pulse cursor-default">
+                        ▍
+                      </span>
+                    )
+                  }
+
+                  children[0] = (children[0] as string).replace('`▍`', '▍')
+                }
+
+                const match = /language-(\w+)/.exec(className || '')
+
+                if (inline) {
                   return (
-                    <span className="mt-1 animate-pulse cursor-default">▍</span>
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
                   )
                 }
 
-                children[0] = (children[0] as string).replace('`▍`', '▍')
-              }
-
-              const match = /language-(\w+)/.exec(className || '')
-
-              if (inline) {
                 return (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
+                  <div className="w-full overflow-auto">
+                    <CodeBlock
+                      key={Math.random()}
+                      language={(match && match[1]) || ''}
+                      value={String(children).replace(/\n$/, '')}
+                      {...props}
+                    />
+                  </div>
                 )
               }
-
-              return (
-                <CodeBlock
-                  key={Math.random()}
-                  language={(match && match[1]) || ''}
-                  value={String(children).replace(/\n$/, '')}
-                  {...props}
-                />
-              )
-            }
-          }}
-        >
-          {text}
-        </MemoizedReactMarkdown>
+            }}
+          >
+            {text}
+          </MemoizedReactMarkdown>
+        </div>
       </div>
     </div>
   )
