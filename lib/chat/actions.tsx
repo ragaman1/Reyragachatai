@@ -49,6 +49,7 @@ async function submitUserMessage(content: string) {
   const result = await streamUI({
     model: openai('llama-3.1-405b'), // Use the custom OpenAI instance
     initial: <SystemMessage>Loading...</SystemMessage>,
+    maxTokens: 1024,
     system: `You are a helpful AI assistant.`,
     messages: [
       ...aiState.get().messages.map((message: any) => ({
