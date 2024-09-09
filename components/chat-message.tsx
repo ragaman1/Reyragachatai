@@ -8,7 +8,6 @@ import remarkMath from 'remark-math'
 import { cn } from '@/lib/utils'
 import { CodeBlock } from '@/components/ui/codeblock'
 import { MemoizedReactMarkdown } from '@/components/markdown'
-import { IconOpenAI, IconUser } from '@/components/ui/icons'
 import { ChatMessageActions } from '@/components/chat-message-actions'
 
 export interface ChatMessageProps {
@@ -28,9 +27,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
             ? 'bg-background'
             : 'bg-primary text-primary-foreground'
         )}
-      >
-        {message.role === 'user' ? <IconUser /> : <IconOpenAI />}
-      </div>
+      ></div>
       <div className="flex-1 px-1 ml-4 space-y-2 overflow-hidden">
         <MemoizedReactMarkdown
           className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
