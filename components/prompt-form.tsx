@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import Textarea from 'react-textarea-autosize'
+import Textarea from 'react-textarea-autosize' // Textarea that auto-expands based on content
 
 import { useActions, useUIState } from 'ai/rsc'
 
@@ -77,8 +77,7 @@ export function PromptForm({
     >
       <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-background px-8 sm:rounded-md sm:border sm:px-12">
         <div className="flex items-end relative">
-          {' '}
-          {/* New wrapper div */}
+          {/* New button for "New Chat" */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -95,21 +94,30 @@ export function PromptForm({
             </TooltipTrigger>
             <TooltipContent>New Chat</TooltipContent>
           </Tooltip>
-          <Textarea
-            ref={inputRef}
-            tabIndex={0}
-            onKeyDown={handleKeyDown}
-            placeholder="Send a message."
-            className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] pb-10 focus-within:outline-none sm:text-sm"
-            autoFocus
-            spellCheck={false}
-            autoComplete="off"
-            autoCorrect="off"
-            name="message"
-            rows={1}
-            value={input}
-            onChange={e => setInput(e.target.value)}
-          />
+
+          {/* Textarea input with scrollable area */}
+          <div className="w-full pr-12">
+            {' '}
+            {/* Extra padding for fixed button */}
+            <Textarea
+              ref={inputRef}
+              tabIndex={0}
+              onKeyDown={handleKeyDown}
+              placeholder="Send a message."
+              className="max-h-[150px] w-full resize-none bg-transparent px-4 py-[1.3rem] pb-10 focus-within:outline-none sm:text-sm overflow-y-auto" // Auto resize and scrollable
+              autoFocus
+              spellCheck={false}
+              autoComplete="off"
+              autoCorrect="off"
+              name="message"
+              minRows={1}
+              maxRows={4} // Set max rows to limit the size of the textarea before scrolling
+              value={input}
+              onChange={e => setInput(e.target.value)}
+            />
+          </div>
+
+          {/* Send button */}
           <div className="absolute right-0 bottom-[13px] sm:right-4">
             <Tooltip>
               <TooltipTrigger asChild>
