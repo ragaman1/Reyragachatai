@@ -1,10 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import Textarea from 'react-textarea-autosize' // Textarea that auto-expands based on content
-
+import Textarea from 'react-textarea-autosize'
 import { useActions, useUIState } from 'ai/rsc'
-
 import { UserMessage } from './stocks/message'
 import { type AI } from '@/lib/chat/actions'
 import { Button } from '@/components/ui/button'
@@ -26,10 +24,35 @@ export function PromptForm({
   setInput: (value: string) => void
 }) {
   const router = useRouter()
-  const { formRef, onKeyDown } = useEnterSubmit()
+  const { formRef } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
   const { submitUserMessage } = useActions()
   const [_, setMessages] = useUIState<typeof AI>()
+
+  // Track whether the keyboard is open
+  const [keyboardOpen, setKeyboardOpen] = React.useState(false)
+
+  // Prevent body scroll when the keyboard is open
+  const preventBodyScroll = () => {
+    document.body.style.overflow = 'hidden'
+  }
+
+  // Restore body scroll when keyboard is closed
+  const restoreBodyScroll = () => {
+    document.body.style.overflow = 'auto'
+  }
+
+  // Handle focus (keyboard opens)
+  const handleFocus = () => {
+    setKeyboardOpen(true)
+    preventBodyScroll()
+  }
+
+  // Handle blur (keyboard closes)
+  const handleBlur = () => {
+    setKeyboardOpen(false)
+    restoreBodyScroll()
+  }
 
   React.useEffect(() => {
     if (inputRef.current) {
@@ -77,7 +100,6 @@ export function PromptForm({
     >
       <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-background px-8 sm:rounded-md sm:border sm:px-12">
         <div className="flex items-end relative">
-          {/* New button for "New Chat" */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -95,13 +117,14 @@ export function PromptForm({
             <TooltipContent>New Chat</TooltipContent>
           </Tooltip>
 
-          {/* Textarea input with scrollable area */}
           <div className="w-full pr-12">
             {' '}
             {/* Extra padding for fixed button */}
             <Textarea
               ref={inputRef}
               tabIndex={0}
+              onFocus={handleFocus} // Detect keyboard open
+              onBlur={handleBlur} // Detect keyboard close
               onKeyDown={handleKeyDown}
               placeholder="Send a message."
               className="max-h-[150px] w-full resize-none bg-transparent px-4 py-[1.3rem] pb-10 focus-within:outline-none sm:text-sm overflow-y-auto" // Auto resize and scrollable
