@@ -17,7 +17,7 @@ const SidebarContext = React.createContext<SidebarContext | undefined>(
 export function useSidebar() {
   const context = React.useContext(SidebarContext)
   if (!context) {
-    throw new Error('useSidebarContext must be used within a SidebarProvider')
+    throw new Error('useSidebar must be used within a SidebarProvider')
   }
   return context
 }
@@ -27,7 +27,7 @@ interface SidebarProviderProps {
 }
 
 export function SidebarProvider({ children }: SidebarProviderProps) {
-  const [isSidebarOpen, setSidebarOpen] = React.useState(true)
+  const [isSidebarOpen, setSidebarOpen] = React.useState<boolean>(true)
   const [isLoading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
@@ -39,14 +39,15 @@ export function SidebarProvider({ children }: SidebarProviderProps) {
   }, [])
 
   const toggleSidebar = () => {
-    setSidebarOpen(value => {
-      const newState = !value
+    setSidebarOpen(prevValue => {
+      const newState = !prevValue
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState))
       return newState
     })
   }
 
   if (isLoading) {
+    // You can return a loading spinner here instead of null if needed
     return null
   }
 

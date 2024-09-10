@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 import { buttonVariants } from '@/components/ui/button'
-import { IconMessage, IconUsers } from '@/components/ui/icons'
+import { IconMessage } from '@/components/ui/icons'
 import {
   Tooltip,
   TooltipContent,
@@ -59,9 +59,7 @@ export function SidebarItem({ index, chat, children }: SidebarItemProps) {
             <TooltipTrigger
               tabIndex={-1}
               className="focus:bg-muted focus:ring-1 focus:ring-ring"
-            >
-              <IconUsers className="mr-2 mt-1 text-zinc-500" />
-            </TooltipTrigger>
+            ></TooltipTrigger>
             <TooltipContent>This is a shared chat.</TooltipContent>
           </Tooltip>
         ) : (
