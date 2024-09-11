@@ -46,51 +46,80 @@ async function submitUserMessage(content: string) {
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>
   let textNode: undefined | React.ReactNode
 
-  const result = await streamUI({
-    model: openai('llama-3.1-405b'), // Use the custom OpenAI instance
-    initial: <SystemMessage>Loading...</SystemMessage>,
-    maxTokens: 1024,
-    system: `You are a helpful AI assistant.`,
-    messages: [
-      ...aiState.get().messages.map((message: any) => ({
-        role: message.role,
-        content: message.content,
-        name: message.name
-      }))
-    ],
-    text: ({ content, done, delta }) => {
-      if (!textStream) {
-        textStream = createStreamableValue('')
-        textNode = <BotMessage content={textStream.value} />
-      }
+  try {
+    const result = await streamUI({
+      model: openai('llama-3.1-405b'), // Use the custom OpenAI instance
+      initial: <SystemMessage>Loading...</SystemMessage>,
+      maxTokens: 1024,
+      system: `You are a helpful AI assistant.`,
+      messages: [
+        ...aiState.get().messages.map((message: any) => ({
+          role: message.role,
+          content: message.content,
+          name: message.name
+        }))
+      ],
+      text: ({ content, done, delta }) => {
+        if (!textStream) {
+          textStream = createStreamableValue('')
+          textNode = <BotMessage content={textStream.value} />
+        }
 
-      if (done) {
-        textStream.done()
-        aiState.done({
-          ...aiState.get(),
-          messages: [
-            ...aiState.get().messages,
-            {
-              id: nanoid(),
-              role: 'assistant',
-              content
-            }
-          ]
-        })
-      } else {
-        textStream.update(delta)
-      }
+        if (done) {
+          textStream.done()
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content
+              }
+            ]
+          })
+        } else {
+          textStream.update(delta)
+        }
 
-      return textNode
-    },
-    tools: {
-      // You can add any custom tools here if needed
+        return textNode
+      },
+      tools: {
+        // You can add any custom tools here if needed
+      }
+    })
+
+    return {
+      id: nanoid(),
+      display: result.value
     }
-  })
+  } catch (error) {
+    // Log the error
+    console.error('Error occurred during message submission:', error)
 
-  return {
-    id: nanoid(),
-    display: result.value
+    // Optionally, update the AI state to reflect that an error occurred
+    aiState.update({
+      ...aiState.get(),
+      messages: [
+        ...aiState.get().messages,
+        {
+          id: nanoid(),
+          role: 'system',
+          content:
+            'An error occurred while processing your request. Please try again.'
+        }
+      ]
+    })
+
+    // Return a fallback UI with an error message
+    return {
+      id: nanoid(),
+      display: (
+        <SystemMessage>
+          Error: Unable to process your request. Please try again.
+        </SystemMessage>
+      )
+    }
   }
 }
 
