@@ -14,7 +14,7 @@ import { createOpenAI } from '@ai-sdk/openai' // Import createOpenAI
 import { BotCard, BotMessage, SystemMessage } from '@/components/stocks'
 
 import { z } from 'zod'
-import { runAsyncFnWithoutBlocking, sleep, nanoid } from '@/lib/utils'
+import { runAsyncFnWithoutBlocking, nanoid } from '@/lib/utils'
 import { saveChat } from '@/app/actions'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
@@ -25,6 +25,54 @@ const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is set in your environment variables
   compatibility: 'strict' // Enable strict mode if needed
 })
+
+// Retry logic function with timeout handling
+async function retryWithTimeout<T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  delayMs = 1000,
+  timeoutMs = 5000
+): Promise<T> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      // Set up the timeout using AbortController
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), timeoutMs)
+
+      // Execute the function, passing in the AbortController signal
+      const result = await fn()
+      clearTimeout(timeout) // Clear the timeout if successful
+      return result
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(`Attempt ${attempt} failed:`, error.message)
+      } else {
+        console.error('An unknown error occurred:', error)
+      }
+
+      if (attempt < retries) {
+        console.log(`Retrying in ${delayMs}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delayMs)) // Delay before retrying
+      } else {
+        throw new Error(`All ${retries} attempts failed.`)
+      }
+    }
+  }
+
+  throw new Error('Unable to complete the request.')
+}
+
+// Define the AIState type
+export type AIState = {
+  chatId: string
+  messages: Message[] // Assuming Message is another type
+}
+
+// Define the UIState type
+export type UIState = {
+  id: string
+  display: React.ReactNode
+}[]
 
 async function submitUserMessage(content: string) {
   'use server'
@@ -47,55 +95,70 @@ async function submitUserMessage(content: string) {
   let textNode: undefined | React.ReactNode
 
   try {
-    const result = await streamUI({
-      model: openai('llama-3.1-405b'), // Use the custom OpenAI instance
-      initial: <SystemMessage>Loading...</SystemMessage>,
-      maxTokens: 1024,
-      system: `You are a helpful AI assistant.`,
-      messages: [
-        ...aiState.get().messages.map((message: any) => ({
-          role: message.role,
-          content: message.content,
-          name: message.name
-        }))
-      ],
-      text: ({ content, done, delta }) => {
-        if (!textStream) {
-          textStream = createStreamableValue('')
-          textNode = <BotMessage content={textStream.value} />
-        }
+    // Retry logic with timeout handling
+    const result = await retryWithTimeout(
+      async () => {
+        return streamUI({
+          model: openai('llama-3.1-405b'), // Use the custom OpenAI instance
+          initial: <SystemMessage>Loading...</SystemMessage>,
+          maxTokens: 1024,
+          system: `You are a helpful AI assistant.`,
+          messages: [
+            ...aiState.get().messages.map((message: any) => ({
+              role: message.role,
+              content: message.content,
+              name: message.name
+            }))
+          ],
+          text: ({ content, done, delta }) => {
+            if (!textStream) {
+              textStream = createStreamableValue('')
+              textNode = <BotMessage content={textStream.value} />
+            }
 
-        if (done) {
-          textStream.done()
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content
-              }
-            ]
-          })
-        } else {
-          textStream.update(delta)
-        }
+            if (done) {
+              textStream.done()
+              aiState.done({
+                ...aiState.get(),
+                messages: [
+                  ...aiState.get().messages,
+                  {
+                    id: nanoid(),
+                    role: 'assistant',
+                    content
+                  }
+                ]
+              })
+            } else {
+              textStream.update(delta)
+            }
 
-        return textNode
+            return textNode
+          },
+          tools: {
+            // You can add any custom tools here if needed
+          }
+        })
       },
-      tools: {
-        // You can add any custom tools here if needed
-      }
-    })
+      3, // Number of retries
+      1000, // Delay between retries (1 second)
+      5000 // Timeout for each request (5 seconds)
+    )
 
     return {
       id: nanoid(),
       display: result.value
     }
   } catch (error) {
-    // Log the error
-    console.error('Error occurred during message submission:', error)
+    // Type-safe error handling
+    if (error instanceof Error) {
+      console.error('Error occurred during message submission:', error.message)
+    } else {
+      console.error(
+        'An unknown error occurred during message submission:',
+        error
+      )
+    }
 
     // Optionally, update the AI state to reflect that an error occurred
     aiState.update({
@@ -123,16 +186,7 @@ async function submitUserMessage(content: string) {
   }
 }
 
-export type AIState = {
-  chatId: string
-  messages: Message[]
-}
-
-export type UIState = {
-  id: string
-  display: React.ReactNode
-}[]
-
+// Define AI object or import it
 export const AI = createAI<AIState, UIState>({
   actions: {
     submitUserMessage
