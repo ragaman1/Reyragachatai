@@ -8,7 +8,7 @@ import {
   streamUI,
   createStreamableValue
 } from 'ai/rsc'
-require('dotenv').config()
+
 import { createOpenAI } from '@ai-sdk/openai' // Import createOpenAI
 
 import { BotCard, BotMessage, SystemMessage } from '@/components/stocks'
@@ -21,7 +21,7 @@ import { auth } from '@/auth'
 
 // Create the OpenAI instance with your custom settings
 const openai = createOpenAI({
-  baseURL: 'https://api.cow.rip/api/v1', // Replace with your proxy URL
+  baseURL: 'https://fast-api.snova.ai/v1', //'https://api.cow.rip/api/v1', // Replace with your proxy URL
   apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is set in your environment variables
   compatibility: 'strict' // Enable strict mode if needed
 })
@@ -99,7 +99,7 @@ async function submitUserMessage(content: string) {
     const result = await retryWithTimeout(
       async () => {
         return streamUI({
-          model: openai('llama-3.1-405b'), // Use the custom OpenAI instance
+          model: openai('Meta-Llama-3.1-405B-Instruct'), //llama-3.1-405b Meta-Llama-3.1-405B-Instruct Use the custom OpenAI instance
           initial: <SystemMessage>Loading...</SystemMessage>,
           maxTokens: 1024,
           system: `You are a helpful AI assistant.`,
