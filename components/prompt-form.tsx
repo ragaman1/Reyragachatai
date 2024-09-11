@@ -6,7 +6,7 @@ import { useActions, useUIState } from 'ai/rsc'
 import { UserMessage } from './stocks/message'
 import { type AI } from '@/lib/chat/actions'
 import { Button } from '@/components/ui/button'
-import { IconArrowElbow, IconPlus } from '@/components/ui/icons'
+import { IconArrowElbow } from '@/components/ui/icons'
 import {
   Tooltip,
   TooltipContent,
@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/tooltip'
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit'
 import { nanoid } from 'nanoid'
-import { useRouter } from 'next/navigation'
 
 export function PromptForm({
   input,
@@ -23,7 +22,6 @@ export function PromptForm({
   input: string
   setInput: (value: string) => void
 }) {
-  const router = useRouter()
   const { formRef } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
   const { submitUserMessage } = useActions()
@@ -75,11 +73,6 @@ export function PromptForm({
       onSubmit={async (e: any) => {
         e.preventDefault()
 
-        // Blur focus on mobile
-        if (window.innerWidth < 600) {
-          e.target['message']?.blur()
-        }
-
         const value = input.trim()
         setInput('')
         if (!value) return
@@ -97,62 +90,49 @@ export function PromptForm({
         const responseMessage = await submitUserMessage(value)
         setMessages(currentMessages => [...currentMessages, responseMessage])
       }}
+      className="relative w-full max-w-xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6"
     >
-      <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-background px-8 sm:rounded-md sm:border sm:px-12">
-        <div className="flex items-end relative">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute left-0 bottom-[14px] size-8 rounded-full bg-background p-0 sm:left-4"
-                onClick={() => {
-                  router.push('/new')
-                }}
-              >
-                <IconPlus />
-                <span className="sr-only">New Chat</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>New Chat</TooltipContent>
-          </Tooltip>
+      <div className="flex items-end justify-between space-x-4">
+        {/* Removed the IconPlus button */}
 
-          <div className="w-full pr-12">
-            {' '}
-            {/* Extra padding for fixed button */}
-            <Textarea
-              ref={inputRef}
-              tabIndex={0}
-              onFocus={handleFocus} // Detect keyboard open
-              onBlur={handleBlur} // Detect keyboard close
-              onKeyDown={handleKeyDown}
-              placeholder="Send a message."
-              className="max-h-[150px] w-full resize-none bg-transparent px-4 py-[1.3rem] pb-10 focus-within:outline-none sm:text-sm overflow-y-auto" // Auto resize and scrollable
-              autoFocus
-              spellCheck={false}
-              autoComplete="off"
-              autoCorrect="off"
-              name="message"
-              minRows={1}
-              maxRows={4} // Set max rows to limit the size of the textarea before scrolling
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
-          </div>
-
-          {/* Send button */}
-          <div className="absolute right-0 bottom-[13px] sm:right-4">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button type="submit" size="icon" disabled={input === ''}>
-                  <IconArrowElbow />
-                  <span className="sr-only">Send message</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Send message</TooltipContent>
-            </Tooltip>
-          </div>
+        {/* Textarea for Message Input */}
+        <div className="relative flex-grow">
+          <Textarea
+            ref={inputRef}
+            className="w-full resize-none bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-full px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
+            placeholder="Type your message..."
+            spellCheck={false}
+            autoComplete="off"
+            autoCorrect="off"
+            minRows={1}
+            maxRows={4}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          />
         </div>
+
+        {/* Send Button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="submit"
+              size="icon"
+              disabled={!input}
+              className={`ml-2 rounded-full p-2 transition-all ${
+                input
+                  ? 'bg-blue-500 hover:bg-blue-600'
+                  : 'bg-gray-300 dark:bg-gray-600'
+              } text-white focus:ring-2 focus:ring-blue-300`}
+            >
+              <IconArrowElbow />
+              <span className="sr-only">Send message</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Send Message</TooltipContent>
+        </Tooltip>
       </div>
     </form>
   )
