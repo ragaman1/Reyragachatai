@@ -7,11 +7,6 @@ import { UserMessage } from './stocks/message'
 import { type AI } from '@/lib/chat/actions'
 import { Button } from '@/components/ui/button'
 import { IconArrowElbow } from '@/components/ui/icons'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@/components/ui/tooltip'
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit'
 import { nanoid } from 'nanoid'
 
@@ -115,24 +110,19 @@ export function PromptForm({
         </div>
 
         {/* Send Button */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="submit"
-              size="icon"
-              disabled={!input}
-              className={`ml-2 rounded-full p-2 transition-all ${
-                input
-                  ? 'bg-blue-500 hover:bg-blue-600'
-                  : 'bg-gray-300 dark:bg-gray-600'
-              } text-white focus:ring-2 focus:ring-blue-300`}
-            >
-              <IconArrowElbow />
-              <span className="sr-only">Send message</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Send Message</TooltipContent>
-        </Tooltip>
+        <Button
+          type="submit"
+          size="icon"
+          disabled={!input}
+          className={`ml-2 rounded-full p-2 transition-all ${
+            input
+              ? 'bg-blue-500 hover:bg-blue-600'
+              : 'bg-gray-300 dark:bg-gray-600'
+          } text-white focus:ring-2 focus:ring-blue-300`}
+        >
+          <IconArrowElbow />
+          <span className="sr-only">Send message</span>
+        </Button>
       </div>
     </form>
   )
