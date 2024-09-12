@@ -94,7 +94,7 @@ export function PromptForm({
         <div className="relative flex-grow">
           <Textarea
             ref={inputRef}
-            className="w-full resize-none bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-full px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
+            className="w-full resize-none bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm rounded-none"
             placeholder="Type your message..."
             spellCheck={false}
             autoComplete="off"
@@ -114,7 +114,7 @@ export function PromptForm({
           type="submit"
           size="icon"
           disabled={!input}
-          className={`ml-2 rounded-full p-2 transition-all ${
+          className={`ml-2 p-2 transition-all ${
             input
               ? 'bg-blue-500 hover:bg-blue-600'
               : 'bg-gray-300 dark:bg-gray-600'
