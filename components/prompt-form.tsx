@@ -10,6 +10,9 @@ import { IconArrowElbow } from '@/components/ui/icons'
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit'
 import { nanoid } from 'nanoid'
 
+// Regular expression to detect RTL characters (like Farsi, Arabic, Hebrew, etc.)
+const rtlRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
+
 export function PromptForm({
   input,
   setInput
@@ -24,6 +27,9 @@ export function PromptForm({
 
   // Track whether the keyboard is open
   const [keyboardOpen, setKeyboardOpen] = React.useState(false)
+
+  // Track text direction (LTR or RTL)
+  const [direction, setDirection] = React.useState<'ltr' | 'rtl'>('ltr')
 
   // Prevent body scroll when the keyboard is open
   const preventBodyScroll = () => {
@@ -52,6 +58,19 @@ export function PromptForm({
       inputRef.current.focus()
     }
   }, [])
+
+  // Detect if the input text contains RTL characters
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value
+    setInput(value)
+
+    // Check if the input contains RTL characters and update the direction
+    if (rtlRegex.test(value)) {
+      setDirection('rtl')
+    } else {
+      setDirection('ltr')
+    }
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && window.innerWidth >= 600) {
@@ -102,10 +121,11 @@ export function PromptForm({
             minRows={1}
             maxRows={4}
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            dir={direction} // Dynamically set text direction
           />
         </div>
 

@@ -14,7 +14,7 @@ import { useStreamableText } from '@/lib/hooks/use-streamable-text'
 export function UserMessage({ children }: { children: React.ReactNode }) {
   return (
     <div className="group relative flex flex-col items-start">
-      <div className="text-sm font-bold text-gray-500 mb-1">User</div>
+      <div className="text-sm font-bold text-red-500 mb-1">User</div>
       <div className="flex-1 space-y-1 overflow-hidden">{children}</div>
     </div>
   )
@@ -31,7 +31,7 @@ export function BotMessage({
 
   return (
     <div className={cn('group relative flex flex-col items-start', className)}>
-      <div className="text-sm font-bold text-gray-500 mb-1">AI</div>
+      <div className="text-sm font-bold text-gray-500 mb-1">Answer</div>
       <div className="flex-1 w-full overflow-hidden">
         <div className="overflow-x-auto">
           <MemoizedReactMarkdown
