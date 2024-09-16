@@ -1,14 +1,14 @@
-// Inspired by Chatbot-UI and modified to fit the needs of this project
-// @see https://github.com/mckaywrigley/chatbot-ui/blob/main/components/Markdown/CodeBlock.tsx
-
-'use client'
-
-import { FC, memo } from 'react'
+import { FC, memo, useState } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { coldarkDark } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-
 import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard'
-import { IconCheck, IconCopy, IconDownload } from '@/components/ui/icons'
+import {
+  IconCheck,
+  IconCopy,
+  IconDownload,
+  IconExpand,
+  IconCollapse
+} from '@/components/ui/icons' // Add Icons for expand/collapse
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -16,11 +16,11 @@ interface Props {
   value: string
 }
 
-interface languageMap {
+interface LanguageMap {
   [key: string]: string | undefined
 }
 
-export const programmingLanguages: languageMap = {
+export const programmingLanguages: LanguageMap = {
   javascript: '.js',
   python: '.py',
   java: '.java',
@@ -58,16 +58,14 @@ export const generateRandomString = (length: number, lowercase = false) => {
 
 const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 })
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const downloadAsFile = () => {
     if (typeof window === 'undefined') {
       return
     }
     const fileExtension = programmingLanguages[language] || '.file'
-    const suggestedFileName = `file-${generateRandomString(
-      3,
-      true
-    )}${fileExtension}`
+    const suggestedFileName = `file-${generateRandomString(3, true)}${fileExtension}`
     const fileName = window.prompt('Enter file name' || '', suggestedFileName)
 
     if (!fileName) {
@@ -90,6 +88,10 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const onCopy = () => {
     if (isCopied) return
     copyToClipboard(value)
+  }
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded)
   }
 
   return (
@@ -115,31 +117,46 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
             {isCopied ? <IconCheck /> : <IconCopy />}
             <span className="sr-only">Copy code</span>
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-xs hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
+            onClick={toggleExpand}
+          >
+            {isExpanded ? <IconCollapse /> : <IconExpand />}
+            <span className="sr-only">
+              {isExpanded ? 'Collapse code' : 'Expand code'}
+            </span>
+          </Button>
         </div>
       </div>
-      <SyntaxHighlighter
-        language={language}
-        style={coldarkDark}
-        PreTag="div"
-        showLineNumbers
-        customStyle={{
-          margin: 0,
-          width: '100%',
-          background: 'transparent',
-          padding: '1.5rem 1rem'
-        }}
-        lineNumberStyle={{
-          userSelect: 'none'
-        }}
-        codeTagProps={{
-          style: {
-            fontSize: '0.9rem',
-            fontFamily: 'var(--font-mono)'
-          }
-        }}
+      <div
+        className={`overflow-auto ${isExpanded ? 'max-h-none' : 'max-h-64'}`}
       >
-        {value}
-      </SyntaxHighlighter>
+        <SyntaxHighlighter
+          language={language}
+          style={coldarkDark}
+          PreTag="div"
+          showLineNumbers
+          customStyle={{
+            margin: 0,
+            width: '100%',
+            background: 'transparent',
+            padding: '1.5rem 1rem'
+          }}
+          lineNumberStyle={{
+            userSelect: 'none'
+          }}
+          codeTagProps={{
+            style: {
+              fontSize: '0.9rem',
+              fontFamily: 'var(--font-mono)'
+            }
+          }}
+        >
+          {value}
+        </SyntaxHighlighter>
+      </div>
     </div>
   )
 })

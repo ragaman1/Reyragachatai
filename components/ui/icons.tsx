@@ -322,6 +322,48 @@ function IconCopy({ className, ...props }: React.ComponentProps<'svg'>) {
   )
 }
 
+function IconExpand({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={cn('size-4', className)}
+      {...props}
+    >
+      <path d="M56 40h56a8 8 0 0 1 0 16H67.3l34.4 34.3a8 8 0 0 1-11.3 11.4L56 67.3V96a8 8 0 0 1-16 0V56a8 8 0 0 1 8-8Zm144 176h-56a8 8 0 0 1 0-16h44.7l-34.4-34.3a8 8 0 0 1 11.3-11.4l34.4 34.3V160a8 8 0 0 1 16 0v40a8 8 0 0 1-8 8Z" />
+    </svg>
+  )
+}
+
+function IconCollapse({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={cn('size-4', className)}
+      {...props}
+    >
+      <path d="M208 56v40a8 8 0 0 1-16 0V67.3l-34.3 34.4a8 8 0 0 1-11.4-11.3L180.7 56H160a8 8 0 0 1 0-16h40a8 8 0 0 1 8 8Zm-104 88a8 8 0 0 1-8-8V67.3L61.7 101.7a8 8 0 0 1-11.4-11.4L80.7 56H56a8 8 0 0 1 0-16h40a8 8 0 0 1 8 8v40a8 8 0 0 1-8 8Z" />
+    </svg>
+  )
+}
+
+function IconWrap({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={cn('size-4', className)}
+      {...props}
+    >
+      <path d="M200 56H56a8 8 0 0 0 0 16h144a24 24 0 0 1 0 48H56a8 8 0 0 0 0 16h144a40 40 0 0 0 0-80Zm-90.34 83.66a8 8 0 0 0-11.32 0l-24 24a8 8 0 0 0 0 11.32l24 24a8 8 0 0 0 11.32-11.32L94.34 168H200a8 8 0 0 0 0-16H94.34l15.32-15.34a8 8 0 0 0 0-11.32Z" />
+    </svg>
+  )
+}
+
 function IconCheck({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
@@ -456,5 +498,8 @@ export {
   IconClose,
   IconShare,
   IconExternalLink,
+  IconExpand,
+  IconCollapse,
+  IconWrap,
   IconChevronUpDown
 }
