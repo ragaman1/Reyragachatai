@@ -113,7 +113,7 @@ export function PromptForm({
         <div className="relative flex-grow">
           <Textarea
             ref={inputRef}
-            className="w-full resize-none bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm rounded-none"
+            className="w-full resize-none bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm rounded-lg" // Changed from rounded-none to rounded-md
             placeholder="Type your message..."
             spellCheck={false}
             autoComplete="off"
