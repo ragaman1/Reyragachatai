@@ -21,7 +21,7 @@ import { auth } from '@/auth'
 
 // Create the OpenAI instance with your custom settings
 const openai = createOpenAI({
-  baseURL: 'https://fast-api.snova.ai/v1', //'https://api.cow.rip/api/v1', // Replace with your proxy URL
+  baseURL: process.env.BaseURL, //'https://api.cow.rip/api/v1', // Replace with your proxy URL
   apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is set in your environment variables
   compatibility: 'strict' // Enable strict mode if needed
 })
