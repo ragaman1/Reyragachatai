@@ -101,7 +101,7 @@ async function submitUserMessage(content: string) {
         return streamUI({
           model: openai('chatgpt-4o-latest'), //llama-3.1-405b Meta-Llama-3.1-405B-Instruct Use the custom OpenAI instance
           initial: <SystemMessage>Loading...</SystemMessage>,
-          maxTokens: 1024,
+          maxTokens: 4000,
           system: `You are a helpful AI assistant.`,
           messages: [
             ...aiState.get().messages.map((message: any) => ({
