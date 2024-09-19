@@ -99,7 +99,7 @@ async function submitUserMessage(content: string) {
     const result = await retryWithTimeout(
       async () => {
         return streamUI({
-          model: openai('Meta-Llama-3.1-405B-Instruct'), //llama-3.1-405b Meta-Llama-3.1-405B-Instruct Use the custom OpenAI instance
+          model: openai('chatgpt-4o-latest'), //llama-3.1-405b Meta-Llama-3.1-405B-Instruct Use the custom OpenAI instance
           initial: <SystemMessage>Loading...</SystemMessage>,
           maxTokens: 1024,
           system: `You are a helpful AI assistant.`,
