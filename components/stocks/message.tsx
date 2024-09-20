@@ -24,7 +24,7 @@ export function UserMessage({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={`group relative flex flex-col items-start`} dir={direction}>
-      <div className="text-sm font-bold text-red-500 mb-1">Elina</div>
+      <div className="text-sm font-bold text-red-500 mb-1">User</div>
       <div className="flex-1 space-y-1 overflow-hidden">{children}</div>
     </div>
   )
@@ -45,7 +45,7 @@ export function BotMessage({
       className={cn('group relative flex flex-col items-start', className)}
       dir={direction}
     >
-      <div className="text-sm font-bold text-blue-500 mb-1">Bahoosh🙂</div>
+      <div className="text-sm font-bold text-blue-500 mb-1">Bahoosh</div>
       <div className="flex-1 w-full overflow-hidden">
         <div className="overflow-x-auto">
           <MemoizedReactMarkdown

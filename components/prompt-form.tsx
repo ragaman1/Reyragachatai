@@ -25,33 +25,8 @@ export function PromptForm({
   const { submitUserMessage } = useActions()
   const [_, setMessages] = useUIState<typeof AI>()
 
-  // Track whether the keyboard is open
-  const [keyboardOpen, setKeyboardOpen] = React.useState(false)
-
   // Track text direction (LTR or RTL)
   const [direction, setDirection] = React.useState<'ltr' | 'rtl'>('ltr')
-
-  // Prevent body scroll when the keyboard is open
-  const preventBodyScroll = () => {
-    document.body.style.overflow = 'hidden'
-  }
-
-  // Restore body scroll when keyboard is closed
-  const restoreBodyScroll = () => {
-    document.body.style.overflow = 'auto'
-  }
-
-  // Handle focus (keyboard opens)
-  const handleFocus = () => {
-    setKeyboardOpen(true)
-    preventBodyScroll()
-  }
-
-  // Handle blur (keyboard closes)
-  const handleBlur = () => {
-    setKeyboardOpen(false)
-    restoreBodyScroll()
-  }
 
   React.useEffect(() => {
     if (inputRef.current) {
@@ -104,45 +79,43 @@ export function PromptForm({
         const responseMessage = await submitUserMessage(value)
         setMessages(currentMessages => [...currentMessages, responseMessage])
       }}
-      className="relative w-full max-w-xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6"
+      className="relative w-full max-w-xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-4 sm:p-6"
     >
-      <div className="flex items-end justify-between space-x-4">
-        {/* Removed the IconPlus button */}
-
-        {/* Textarea for Message Input */}
-        <div className="relative flex-grow">
+      <div className="flex flex-col">
+        {/* Textarea Container */}
+        <div className="relative">
           <Textarea
             ref={inputRef}
-            className="w-full resize-none bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm rounded-lg" // Changed from rounded-none to rounded-md
-            placeholder="Type your message..."
+            className={`w-full resize-none bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 pr-14 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm border border-gray-300 dark:border-gray-600 rounded-md ${
+              direction === 'rtl' ? 'text-right' : 'text-left'
+            }`}
+            placeholder="message"
             spellCheck={false}
             autoComplete="off"
             autoCorrect="off"
             minRows={1}
-            maxRows={4}
+            maxRows={6}
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
             dir={direction} // Dynamically set text direction
           />
-        </div>
 
-        {/* Send Button */}
-        <Button
-          type="submit"
-          size="icon"
-          disabled={!input}
-          className={`ml-2 p-2 transition-all ${
-            input
-              ? 'bg-blue-500 hover:bg-blue-600'
-              : 'bg-gray-300 dark:bg-gray-600'
-          } text-white focus:ring-2 focus:ring-blue-300`}
-        >
-          <IconArrowElbow />
-          <span className="sr-only">Send message</span>
-        </Button>
+          {/* Send Icon Positioned at Bottom-Right */}
+          <Button
+            type="submit"
+            size="icon"
+            disabled={!input.trim()}
+            className={`absolute bottom-2 right-2 flex items-center justify-center p-2 transition-all ${
+              input.trim()
+                ? 'bg-blue-500 hover:bg-blue-600'
+                : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+            } text-white focus:ring-2 focus:ring-blue-300 rounded-md`}
+          >
+            <IconArrowElbow />
+            <span className="sr-only">Send message</span>
+          </Button>
+        </div>
       </div>
     </form>
   )
