@@ -26,7 +26,7 @@ const openai = createOpenAI({
   compatibility: 'strict' // Enable strict mode if needed
 })
 
-// Retry logic function with timeout handling
+// Retry logic function with timeout handling new branch
 async function retryWithTimeout<T>(
   fn: () => Promise<T>,
   retries = 3,
