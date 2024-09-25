@@ -17,15 +17,31 @@ function detectDirection(text: string) {
   return rtlRegex.test(text) ? 'rtl' : 'ltr'
 }
 
+// Responsive container for chat messages
+export function ChatContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="w-full max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] mx-auto px-4">
+      {children}
+    </div>
+  )
+}
+
 // Different types of message bubbles.
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
   const direction = detectDirection(children?.toString() || '')
 
   return (
-    <div className={`group relative flex flex-col items-start`} dir={direction}>
-      <div className="text-sm font-bold text-red-500 mb-1">User</div>
-      <div className="flex-1 space-y-1 overflow-hidden">{children}</div>
+    <div className="flex justify-end mb-4" dir={direction}>
+      <div className="max-w-[80%]">
+        <div className="text-sm font-bold text-red-500 mb-1 text-right">
+          User
+        </div>
+        <div className="bg-blue-500 text-white rounded-2xl p-3 relative">
+          {children}
+          <span className="absolute right-0 bottom-0 w-0 h-0 border-t-[15px] border-t-blue-500 border-l-[15px] border-l-transparent"></span>
+        </div>
+      </div>
     </div>
   )
 }
@@ -67,7 +83,7 @@ export function BotMessage({
                     )
                   }
 
-                  children[0] = (children[0] as string).replace('`▍`', '▍')
+                  children[0] = (children[0] as string).replace('▍', '▍')
                 }
 
                 const match = /language-(\w+)/.exec(className || '')

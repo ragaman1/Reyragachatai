@@ -102,7 +102,7 @@ async function submitUserMessage(content: string) {
           model: openai('chatgpt-4o-latest'), //llama-3.1-405b Meta-Llama-3.1-405B-Instruct Use the custom OpenAI instance
           initial: <SystemMessage>Loading...</SystemMessage>,
           maxTokens: 4000,
-          system: `You are a helpful AI assistant.`,
+          system: `You are a fun AI assistant in coding`,
           messages: [
             ...aiState.get().messages.map((message: any) => ({
               role: message.role,
