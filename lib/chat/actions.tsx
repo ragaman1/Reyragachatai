@@ -20,14 +20,20 @@ import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
 
 // First, let's assume you have two API keys stored in your environment variables
-const API_KEY_1 = process.env.OPENAI_API_KEY
-const API_KEY_2 = process.env.OPENAI_API_KEY_2
+// Store API keys in an array
+const API_KEYS = [
+  process.env.OPENAI_API_KEY,
+  process.env.OPENAI_API_KEY_2,
+  process.env.OPENAI_API_KEY_3,
+  process.env.OPENAI_API_KEY_4,
+  process.env.OPENAI_API_KEY_5
+  // Add more API keys as needed
+]
 
 // Function to randomly select an API key
 function getRandomAPIKey() {
-  return Math.random() < 0.5 ? API_KEY_1 : API_KEY_2
+  return API_KEYS[Math.floor(Math.random() * API_KEYS.length)]
 }
-
 // Retry logic function with timeout handling new branch
 async function retryWithTimeout<T>(
   fn: () => Promise<T>,
