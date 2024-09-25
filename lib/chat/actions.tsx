@@ -116,9 +116,9 @@ async function submitUserMessage(content: string) {
     const result = await retryWithTimeout(
       async () => {
         return streamUI({
-          model: makeOpenAICall()('chatgpt-4o-latest'), // Use the custom OpenAI instance with random API key
+          model: makeOpenAICall()('Meta-Llama-3.1-405B-Instruct'), // Meta-Llama-3.1-405B-Instruct /chatgpt-4o-latest
           initial: <SystemMessage>Loading...</SystemMessage>,
-          maxTokens: 4000,
+          maxTokens: 2000,
           system: `You are a fun AI assistant in coding`,
           messages: [
             ...aiState.get().messages.map((message: any) => ({
