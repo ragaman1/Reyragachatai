@@ -19,12 +19,14 @@ import { saveChat } from '@/app/actions'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
 
-// Create the OpenAI instance with your custom settings
-const openai = createOpenAI({
-  baseURL: process.env.BaseURL, // Replace with your proxy URL
-  apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is set in your environment variables
-  compatibility: 'strict' // Enable strict mode if needed
-})
+// First, let's assume you have two API keys stored in your environment variables
+const API_KEY_1 = process.env.OPENAI_API_KEY
+const API_KEY_2 = process.env.OPENAI_API_KEY_2
+
+// Function to randomly select an API key
+function getRandomAPIKey() {
+  return Math.random() < 0.5 ? API_KEY_1 : API_KEY_2
+}
 
 // Retry logic function with timeout handling new branch
 async function retryWithTimeout<T>(
@@ -74,6 +76,15 @@ export type UIState = {
   display: React.ReactNode
 }[]
 
+// Function to create an OpenAI instance with a random API key
+function makeOpenAICall() {
+  return createOpenAI({
+    baseURL: process.env.BaseURL, // Replace with your proxy URL
+    apiKey: getRandomAPIKey(), // Use the random API key selection function
+    compatibility: 'strict' // Enable strict mode if needed
+  })
+}
+
 async function submitUserMessage(content: string) {
   'use server'
 
@@ -99,7 +110,7 @@ async function submitUserMessage(content: string) {
     const result = await retryWithTimeout(
       async () => {
         return streamUI({
-          model: openai('chatgpt-4o-latest'), //llama-3.1-405b Meta-Llama-3.1-405B-Instruct Use the custom OpenAI instance
+          model: makeOpenAICall()('chatgpt-4o-latest'), // Use the custom OpenAI instance with random API key
           initial: <SystemMessage>Loading...</SystemMessage>,
           maxTokens: 4000,
           system: `You are a fun AI assistant in coding`,
@@ -254,4 +265,3 @@ export const getUIStateFromAIState = (aiState: Chat) => {
         ) : null
     }))
 }
-//test
