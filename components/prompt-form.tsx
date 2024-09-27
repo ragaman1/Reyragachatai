@@ -79,7 +79,12 @@ export function PromptForm({
         const responseMessage = await submitUserMessage(value)
         setMessages(currentMessages => [...currentMessages, responseMessage])
       }}
-      className="relative w-full max-w-xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-4 sm:p-6"
+      className="relative w-full mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-4 sm:p-6 
+           max-w-2xl 
+           md:max-w-3xl 
+           lg:max-w-4xl 
+           xl:max-w-5xl 
+           2xl:max-w-6xl"
     >
       <div className="flex flex-col">
         {/* Textarea Container */}

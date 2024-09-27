@@ -37,7 +37,7 @@ export function ChatPanel({
         scrollToBottom={scrollToBottom}
       />
 
-      <div className="mx-auto sm:max-w-2xl sm:px-4">
+      <div className="mx-auto px-4 sm:max-w-2xl sm:px-4 lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl">
         {messages?.length >= 2 ? (
           <div className="flex h-12 items-center justify-center">
             <div className="flex space-x-2">
