@@ -2,7 +2,6 @@ import 'server-only'
 
 import {
   createAI,
-  createStreamableUI,
   getMutableAIState,
   getAIState,
   streamUI,
@@ -11,10 +10,10 @@ import {
 
 import { createOpenAI } from '@ai-sdk/openai' // Import createOpenAI
 
-import { BotCard, BotMessage, SystemMessage } from '@/components/stocks'
+import { BotMessage, SystemMessage } from '@/components/stocks'
 
 import { z } from 'zod'
-import { runAsyncFnWithoutBlocking, nanoid } from '@/lib/utils'
+import { nanoid } from '@/lib/utils'
 import { saveChat } from '@/app/actions'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
@@ -119,7 +118,7 @@ async function submitUserMessage(content: string) {
           model: makeOpenAICall()('Meta-Llama-3.1-405B-Instruct'), // Meta-Llama-3.1-405B-Instruct /chatgpt-4o-latest
           initial: <SystemMessage>Loading...</SystemMessage>,
           maxTokens: 2000,
-          system: `You are a fun AI assistant in coding`,
+          system: `You are a fun AI assistant in coding.and consider last updates in 2023`,
           messages: [
             ...aiState.get().messages.map((message: any) => ({
               role: message.role,
