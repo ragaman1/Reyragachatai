@@ -27,25 +27,18 @@ export function ChatContainer({ children }: { children: React.ReactNode }) {
 }
 
 // Different types of message bubbles.
-
 export function UserMessage({ children }: { children: React.ReactNode }) {
   const direction = detectDirection(children?.toString() || '')
 
   return (
-    <div className="flex justify-end mb-4" dir={direction}>
-      <div className="max-w-[80%]">
-        <div className="text-sm font-bold text-red-500 mb-1 text-right">
-          User
-        </div>
-        <div className="bg-blue-500 text-white rounded-2xl p-3 relative">
-          {children}
-          <span className="absolute right-0 bottom-0 w-0 h-0 border-t-[15px] border-t-blue-500 border-l-[15px] border-l-transparent"></span>
-        </div>
+    <div className="group relative flex flex-col items-start" dir={direction}>
+      <div className="text-sm font-bold text-red-500 mb-1">User</div>
+      <div className="flex-1 w-full overflow-hidden">
+        <div className="bg-blue-500 text-white p-3 rounded-2xl">{children}</div>
       </div>
     </div>
   )
 }
-
 export function BotMessage({
   content,
   className
@@ -61,7 +54,7 @@ export function BotMessage({
       className={cn('group relative flex flex-col items-start', className)}
       dir={direction}
     >
-      <div className="text-sm font-bold text-blue-500 mb-1">Bahoosh</div>
+      <div className="text-sm font-bold text-red-500 mb-1">Answer</div>
       <div className="flex-1 w-full overflow-hidden">
         <div className="overflow-x-auto">
           <MemoizedReactMarkdown
@@ -70,7 +63,9 @@ export function BotMessage({
             components={{
               p({ children }) {
                 return (
-                  <p className="mb-1 last:mb-0 whitespace-normal">{children}</p>
+                  <p className="mb-1 last:mb-0 whitespace-normal bg-gray-700 text-white p-3 rounded-2xl">
+                    {children}
+                  </p>
                 )
               },
               code({ node, inline, className, children, ...props }) {
