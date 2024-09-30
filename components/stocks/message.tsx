@@ -31,14 +31,18 @@ export function UserMessage({ children }: { children: React.ReactNode }) {
   const direction = detectDirection(children?.toString() || '')
 
   return (
-    <div className="group relative flex flex-col items-start" dir={direction}>
-      <div className="text-sm font-bold text-red-500 mb-1">User</div>
+    <div className="group relative flex flex-col items-end" dir={direction}>
+      <div className="text-sm font-bold text-red-500 mb-1 text-right">User</div>
       <div className="flex-1 w-full overflow-hidden">
-        <div className="bg-blue-500 text-white p-3 rounded-2xl">{children}</div>
+        <div className="bg-blue-500 text-white p-3 rounded-2xl relative">
+          {children}
+          {/* You can add an arrow or any additional styling if needed */}
+        </div>
       </div>
     </div>
   )
 }
+
 export function BotMessage({
   content,
   className
@@ -55,7 +59,7 @@ export function BotMessage({
       dir={direction}
     >
       {/* Bot name */}
-      <div className="text-sm font-bold text-red-500 mb-1">Answer</div>
+      <div className="text-sm font-bold text-blue-500 mb-1">Answer</div>
 
       {/* Message bubble with consistent background */}
       <div className="flex-1 w-full overflow-hidden">
@@ -64,9 +68,15 @@ export function BotMessage({
             className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 max-w-none"
             remarkPlugins={[remarkGfm, remarkMath]}
             components={{
+              // Restored the 'p' component
+              p({ children }) {
+                return (
+                  <p className="mb-1 last:mb-0 whitespace-normal">{children}</p>
+                )
+              },
               code({ node, inline, className, children, ...props }) {
                 if (children.length) {
-                  if (children[0] == '▍') {
+                  if (children[0] === '▍') {
                     return (
                       <span className="mt-1 animate-pulse cursor-default">
                         ▍
@@ -100,6 +110,49 @@ export function BotMessage({
             {text}
           </MemoizedReactMarkdown>
         </div>
+      </div>
+    </div>
+  )
+}
+
+export function BotCard({
+  children,
+  showAvatar = true
+}: {
+  children: React.ReactNode
+  showAvatar?: boolean
+}) {
+  const direction = detectDirection(children?.toString() || '')
+
+  return (
+    <div className="group relative flex flex-col items-start" dir={direction}>
+      <div className="text-sm font-bold text-gray-500 mb-1">AI</div>
+      <div className="flex-1">{children}</div>
+    </div>
+  )
+}
+
+export function SystemMessage({ children }: { children: React.ReactNode }) {
+  const direction = detectDirection(children?.toString() || '')
+
+  return (
+    <div
+      className={
+        'mt-1 flex items-center justify-center gap-1 text-xs text-gray-500'
+      }
+      dir={direction}
+    >
+      <div className={'max-w-[600px] flex-initial p-1'}>{children}</div>
+    </div>
+  )
+}
+
+export function SpinnerMessage() {
+  return (
+    <div className="group relative flex flex-col items-start">
+      <div className="text-sm font-bold text-gray-500 mb-1">AI</div>
+      <div className="h-[24px] flex flex-row items-center flex-1 overflow-hidden">
+        {spinner}
       </div>
     </div>
   )
